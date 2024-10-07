@@ -1,0 +1,79 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-boot-app
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/rules_db?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=secret
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - app-network
+  # MySQL Service
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-db-gcash
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret # Set root user password
+      MYSQL_DATABASE: rules_db       # Create database
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+#  # PostgreSQL Service for SonarQube
+#  postgres-db:
+#    image: postgres:13
+#    container_name: postgres-db-gcash-sonarqube
+#    restart: always
+#    environment:
+#      POSTGRES_USER: sonar
+#      POSTGRES_PASSWORD: secret
+#      POSTGRES_DB: sonarqube
+#    ports:
+#      - "5434:5434"
+#    volumes:
+#      - postgres-data:/var/lib/postgresql/data
+#    networks:
+#      - app-network
+#
+#  # SonarQube Service
+#  sonarqube:
+#    image: sonarqube:9.9-community
+#    container_name: sonarqube
+#    restart: always
+#    environment:
+#      SONAR_JDBC_URL: jdbc:postgresql://postgres-db:5434/sonarqube
+#      SONAR_JDBC_USERNAME: sonar
+#      SONAR_JDBC_PASSWORD: secret
+#      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+#    ports:
+#      - "9001:9001"
+#    networks:
+#      - app-network
+#    depends_on:
+#      - postgres-db
+
+volumes:
+#  postgres-data:
+#    driver: local
+  mysql-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

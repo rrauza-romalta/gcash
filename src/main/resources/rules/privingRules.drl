@@ -1,0 +1,56 @@
+package com.gcash.rules;
+
+import com.gcash.exam.dto.ParcelRequestDTO;
+import com.gcash.exam.dto.ParcelResponseDTO;
+
+global com.gcash.exam.dto.ParcelResponseDTO response;
+
+rule "Reject Parcel"
+    salience 100
+    when
+        $request : ParcelRequestDTO(weight > 50)
+    then
+        response.setRuleApplied("Reject");
+        response.setCost(0);
+        response.setMessage("Weight exceeds the maximum limit of 50kg.");
+        drools.halt();
+end
+
+rule "Heavy Parcel"
+    salience 90
+    when
+        $request : ParcelRequestDTO(weight > 10)
+    then
+        response.setRuleApplied("Heavy Parcel");
+        response.setCost(20 * $request.getWeight());
+        drools.halt();
+end
+
+rule "Small Parcel"
+    salience 80
+    when
+        $request : ParcelRequestDTO($volume : volume < 1500)
+    then
+        response.setRuleApplied("Small Parcel");
+        response.setCost(0.03 * $volume);
+        drools.halt();
+end
+
+rule "Medium Parcel"
+    salience 70
+    when
+        $request : ParcelRequestDTO($volume : volume < 2500)
+    then
+        response.setRuleApplied("Medium Parcel");
+        response.setCost(0.04 * $volume);
+        drools.halt();
+end
+
+rule "Large Parcel"
+    salience 60
+    when
+        $request : ParcelRequestDTO()
+    then
+        response.setRuleApplied("Large Parcel");
+        response.setCost(0.05 * $request.getVolume());
+end

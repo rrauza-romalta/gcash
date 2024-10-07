@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+     http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="2" author="roy-auza">
+        <insert tableName="rules">
+            <column name="name" value="Reject Parcel"/>
+            <column name="salience" valueNumeric="100"/>
+            <column name="condition" value="$request : ParcelRequestDTO( weight > 50 )"/>
+            <column name="action">
+                <![CDATA[
+                    response.setRuleApplied("Reject");
+                    response.setCost(0);
+                    response.setMessage("Weight exceeds the maximum limit of 50kg.");
+                    drools.halt();
+                ]]>
+            </column>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="description" value="Reject parcels over 50kg"/>
+        </insert>
+
+        <insert tableName="rules">
+            <column name="name" value="Heavy Parcel"/>
+            <column name="salience" valueNumeric="90"/>
+            <column name="condition" value="$request : ParcelRequestDTO( weight > 10 )"/>
+            <column name="action">
+                <![CDATA[
+                    response.setRuleApplied("Heavy Parcel");
+                    response.setCost(20 * $request.getWeight());
+                    drools.halt();
+                ]]>
+            </column>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="description" value="Parcels over 10kg"/>
+        </insert>
+
+        <insert tableName="rules">
+            <column name="name" value="Small Parcel"/>
+            <column name="salience" valueNumeric="80"/>
+            <column name="condition">
+                <![CDATA[$request : ParcelRequestDTO($volume : volume < 1500)]]>
+            </column>
+            <column name="action">
+                <![CDATA[
+                    response.setRuleApplied("Small Parcel");
+                    response.setCost(0.03 * $volume);
+                    drools.halt();
+                ]]>
+            </column>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="description" value="Volume is less than 1500 cm3"/>
+        </insert>
+
+        <insert tableName="rules">
+            <column name="name" value="Medium Parcel"/>
+            <column name="salience" valueNumeric="70"/>
+            <column name="condition">
+                <![CDATA[
+                    $request : ParcelRequestDTO($volume : volume < 2500)
+                ]]>
+            </column>
+            <column name="action">
+                <![CDATA[
+                    response.setRuleApplied("Medium Parcel");
+                    response.setCost(0.04 * $volume);
+                    drools.halt();
+                ]]>
+            </column>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="description" value="Volume is less than 2500 cm3"/>
+        </insert>
+
+        <insert tableName="rules">
+            <column name="name" value="Large Parcel"/>
+            <column name="salience" valueNumeric="60"/>
+            <column name="condition">
+                <![CDATA[
+                    $request : ParcelRequestDTO()
+                ]]>
+            </column>
+            <column name="action">
+                <![CDATA[
+                    response.setRuleApplied("Large Parcel");
+                    response.setCost(0.05 * $request.getVolume());
+                ]]>
+            </column>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="description" value="Large Parcel"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
