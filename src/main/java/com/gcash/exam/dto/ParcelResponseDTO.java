@@ -14,4 +14,5 @@ public class ParcelResponseDTO {
     private double cost;
     private double discount;
     private double totalCost;
+    private String message;
 }

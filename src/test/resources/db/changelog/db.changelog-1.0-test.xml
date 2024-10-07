@@ -8,7 +8,7 @@
 
     <changeSet id="1" author="roy-auza">
         <preConditions onFail="MARK_RAN">
-            <dbms type="mysql"/>
+            <dbms type="h2"/>
         </preConditions>
         <createTable tableName="rules">
             <column name="id" type="BIGINT">
@@ -31,7 +31,7 @@
             </column>
             <column name="description" type="VARCHAR(500)"/>
         </createTable>
-        <addAutoIncrement tableName="rules" columnName="id" columnDataType="BIGINT"/>
+        <addAutoIncrement tableName="rules" columnName="id" columnDataType="BIGINT" incrementBy="1"/>
     </changeSet>
 
 </databaseChangeLog>

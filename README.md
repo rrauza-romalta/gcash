@@ -33,6 +33,8 @@ This project is a backend application (for GCash) built with Spring Boot for the
 
 ### Usage Development
 - The backend API will be available at `http://localhost:8087`
+- API to calculate cost of delivery at `http://localhost:8087/api/v1/parcels/calculate`
+
 
 ### License
 This project is licensed under the MIT License.

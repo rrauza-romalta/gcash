@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
+    public ResponseEntity<ResponseDTO<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(getGenericBadRequest(ex.getMessage()));
     }
 
     @ExceptionHandler(ParcelException.class)
@@ -21,5 +21,18 @@ public class GlobalExceptionHandler {
                                 null,
                                 false);
         return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseDTO<String>> handleGenericException(Exception ex) {
+        return ResponseEntity.badRequest().body(getGenericBadRequest(ex.getMessage()));
+    }
+
+    private ResponseDTO<String> getGenericBadRequest(String message) {
+        return new ResponseDTO<>(
+                ErrorCode.BAD_REQUEST.getCode(),
+                message,
+                null,
+                false);
     }
 }

@@ -4,7 +4,8 @@ public enum ErrorCode {
     REJECTED(1001, "Weight Exceeds 50kg"),
     VOUCHER_INVALID(2001, "Voucher code is invalid"),
     VOUCHER_UNVERIFIED(2002, "Unable to verify voucher"),
-    VOUCHER_API_EXCEPTION(2003, "Bad request Voucher API");
+    VOUCHER_API_EXCEPTION(2003, "Bad request Voucher API"),
+    BAD_REQUEST(3001, "Bad Request");
 
     private final int code;
     private final String message;
